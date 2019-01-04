@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 import './NewPost.css';
 
@@ -7,6 +8,16 @@ class NewPost extends Component {
         title: '',
         content: '',
         author: 'Jacob'
+    }
+
+    submitPostHandler = async () => {
+        const post = {
+            title: this.state.title,
+            body: this.state.content,
+            author: this.state.author,
+        }
+        const res = await axios.post('/posts', post);
+        console.log(res)
     }
 
     render() {
@@ -23,7 +34,7 @@ class NewPost extends Component {
                     <option value="Manu">Manu</option>
                     <option value="Jacob">Jacob</option>
                 </select>
-                <button>Add Post</button>
+                <button onClick={this.submitPostHandler}>Add Post</button>
             </div>
         );
     }
