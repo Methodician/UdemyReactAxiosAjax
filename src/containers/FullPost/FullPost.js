@@ -8,12 +8,26 @@ class FullPost extends Component {
         loadedPost: null
     }
 
-    async componentDidUpdate() {
-        if (this.props.id) {
-            if (this.state.loadedPost && this.state.loadedPost.id === this.props.id) {
+    componentDidMount() {
+        // async componentDidUpdate() {
+        // Updating occurs when things change, but now we're actually loading it to the DOM so it mounts.
+        // now we also want to update upon change, so adding back in didUpdate
+        this.loadData();
+    }
+    componentDidUpdate() {
+        this.loadData();
+    }
+
+    async loadData() {
+        console.log(this.props);
+        if (this.props.match.params.id) {
+            const postId = this.props.match.params.id;
+            if (this.state.loadedPost && this.state.loadedPost.id === +postId) {
+                // In this case the postId is actually a strig but this.state.loadedPost.id is a number
+                // We can use "==" non-strict check to cooerce the types or just make it a number with "+"
                 return;
             }
-            const postRes = await axios.get(`/posts/${this.props.id}`);
+            const postRes = await axios.get(`/posts/${postId}`);
             const loadedPost = postRes.data;
             // const authorRes = await axios.get(`http://jsonplaceholder.typicode.com/users/${post.userId}`);
             // const author = authorRes.data;
@@ -22,13 +36,13 @@ class FullPost extends Component {
     }
 
     deletePostHandler = async () => {
-        const res = await axios.delete(`/posts/${this.props.id}`);
+        const res = await axios.delete(`/posts/${this.props.match.params.id}`);
         console.log(res);
     }
 
     render() {
         let post = <p style={{ textAlign: 'center' }}>Please select a Post!</p>;
-        if (this.state.id) {
+        if (this.props.match.params.id) {
             post = <p style={{ textAlign: 'center' }}>Loading...</p>;
         }
         if (this.state.loadedPost) {
